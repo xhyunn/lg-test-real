@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Empathy in Motion - 유형 검사</title>
+  <style>
+    :root {
+      --main-padding: 1.2rem;
+      --content-width: 90%;
+      --max-width: 600px;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f9f9fb;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #startScreen, #quizSection {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    #startScreen {
+      position: relative;
+      display: flex;
+      color: white;
+      text-align: center;
+      background: url('first-screen.png') no-repeat center center;
+      background-size: cover;
+      overflow: hidden;
+    }
+
+    #startScreen video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    #startScreen .overlay {
+      position: relative;
+      z-index: 2;
+    }
+
+    #startScreen h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      padding: 0 var(--main-padding);
+    }
+
+    .start-btn {
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 24px;
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    header {
+      background-color: #222;
+      color: white;
+      width: 100%;
+      padding: 1.5rem var(--main-padding);
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .question {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin: 1rem;
+      padding: 1.5rem;
+      width: var(--content-width);
+      max-width: var(--max-width);
+    }
+
+    .question p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .scale {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .scale input[type="radio"] {
+      display: none;
+    }
+
+    .scale label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .scale input[type="radio"]:checked + label {
+      background-color: #5e3dea;
+      border-color: #5e3dea;
+    }
+
+    .scale label:hover {
+      transform: scale(1.1);
+      border-color: #888;
+    }
+
+    .submit-btn {
+      background-color: #000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      margin: 2rem 0;
+      cursor: pointer;
+      width: auto;
+      max-width: var(--max-width);
+    }
+
+    .result {
+      padding: 2rem;
+      margin: 1rem;
+      border-radius: 8px;
+      max-width: var(--max-width);
+      display: none;
+      text-align: center;
+      width: var(--content-width);
+    }
+
+    .result img {
+      max-width: 200px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="startScreen">
+    <div class="overlay">
+      <h1>Empathy in Motion</h1>
+      <button class="start-btn" onclick="startQuiz()">Start</button>
+    </div>
+  </div>
+
+  <div id="quizSection">
+    <img src="lg-logo.png" alt="LG logo" style="width: 100px; margin: 2rem auto;" />
+    <form id="quizForm"></form>
+    <button class="submit-btn" id="submitBtn">결과 보기</button>
+  </div>
+
+  <script>
+    document.getElementById('startScreen').style.display = 'flex';
+
+    function startQuiz() {
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('quizSection').style.display = 'flex';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const questions = [
+        "기분에 따라 보고 싶은 콘텐츠가 자주 바뀐다.",
+        "지금 내 기분에 잘 맞는 콘텐츠를 추천받는다면 매우 만족할 것 같다.",
+        "복잡한 선택보다는 빠른 추천이 있으면 좋겠다.",
+        "콘텐츠는 감정보다 정보 전달이 중요하다고 생각한다.",
+        "나는 조용한 분위기의 콘텐츠나 공간을 선호한다.",
+        "플랫폼이 내 일상 패턴을 기억해주면 편리할 것 같다.",
+        "일정하지 않은 시간에 다양한 기분으로 콘텐츠를 소비하는 편이다.",
+        "하루의 분위기나 날씨에 따라 콘텐츠가 바뀌면 좋겠다.",
+        "나는 내가 직접 설정하고 조작하는 것을 선호한다.",
+        "플랫폼이 내 상태를 먼저 감지하고 콘텐츠를 제안해준다면 만족할 것 같다."
+      ];
+
+      const weights = [
+        [4,2,1,5], [5,3,2,4], [3,5,4,2], [2,4,5,2], [5,2,4,3],
+        [4,3,5,3], [3,3,1,5], [5,2,2,4], [2,5,4,2], [5,3,3,4]
+      ];
+
+      const types = ["원 (CIR)", "삼각형 (TRI)", "사각형 (SQR)", "선 (LIN)"];
+      const colors = ["#FFB6C1", "#FFD700", "#87CEFA", "#90EE90"];
+      const images = ["circle.png", "triangle.png", "square.png", "line.png"];
+
+      const form = document.getElementById("quizForm");
+      questions.forEach((q, i) => {
+        const block = document.createElement("div");
+        block.className = "question";
+        block.innerHTML = `<p><strong>Q${i + 1}</strong>. ${q}</p>`;
+
+        const scale = document.createElement("div");
+        scale.className = "scale";
+
+      for (let j = 1; j <= 5; j++) {
+        const input = document.createElement("input");
+        const label = document.createElement("label");
+        const id = `q${i}_v${j}`;
+        input.type = "radio";
+        input.name = `q${i}`;
+        input.id = id;
+        input.value = j;
+        input.required = true;
+        label.htmlFor = id;
+        label.innerHTML = `<span style="display:block;width:24px;height:24px;border:2px solid #bbb;border-radius:50%;margin-bottom:4px;"></span><span style="font-size:0.8rem;">${j}</span>`;
+        scale.appendChild(input);
+        scale.appendChild(label);
+      }
+        block.appendChild(scale);
+        form.appendChild(block);
+      });
+
+      document.getElementById("submitBtn").addEventListener("click", function () {
+        const scores = [0, 0, 0, 0];
+        for (let i = 0; i < questions.length; i++) {
+          const val = parseInt(document.querySelector(`input[name='q${i}']:checked`)?.value);
+          if (!val) {
+            alert("모든 문항에 응답해주세요.");
+            return;
+          }
+          for (let j = 0; j < 4; j++) {
+            scores[j] += val * weights[i][j];
+          }
+        }
+        const max = Math.max(...scores);
+        const idx = scores.indexOf(max);
+        localStorage.setItem("resultType", types[idx]);
+        localStorage.setItem("resultColor", colors[idx]);
+        localStorage.setItem("resultImage", images[idx]);
+        window.location.href = "result.html";
+      });
+    });
+  </script>
+</body>
+</html>

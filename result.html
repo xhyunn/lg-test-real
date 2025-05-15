@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empathy in Motion - 결과</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: transparent;
+      padding: 2rem 0;
+      border-radius: 10px;
+      text-align: left;
+      box-sizing: border-box;
+    }
+    .logo {
+      width: 100px;
+      margin: 2rem auto 1rem;
+      display: block;
+    }
+    .type-box {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 1rem;
+    }
+    .type {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    #typeImage {
+      width: 70%;
+      margin: 1rem 0;
+      display: block;
+    }
+    .desc {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #444;
+      padding: 0 0rem;
+    }
+    .compatibility {
+      margin-top: 2rem;
+      font-size: 0.95rem;
+      color: #333;
+      line-height: 1.5;
+    }
+    .match-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding: 0;
+    }
+    .match-box {
+      background: #f0f0f0;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 100%;
+    }
+    .match-good {
+      border-left: 5px solid #4caf50;
+    }
+    .match-bad {
+      border-left: 5px solid #f44336;
+    }
+    .match-box h4 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <img class="logo" src="lg-logo.png" alt="LG logo" />
+  <div class="container">
+    <div class="type-box">
+      <div class="type" id="typeText"></div>
+      <img id="typeImage" src="" alt="유형 이미지" />
+      <div class="desc" id="typeDesc"></div>
+    </div>
+    <!-- compatibility block moved below -->
+  </div>
+  <div class="compatibility" id="typeCompatibility"></div>
+
+  <script>
+    const type = localStorage.getItem('resultType');
+    const color = localStorage.getItem('resultColor');
+    const images = {
+      "원 (CIR)": "circle.png",
+      "삼각형 (TRI)": "triangle.png",
+      "사각형 (SQR)": "square.png",
+      "선 (LIN)": "line.png"
+    };
+    const image = images[type];
+
+    const descriptions = {
+      "원 (CIR)": "당신은 부드럽고 감성적인 유형입니다. 다른 사람의 감정을 잘 이해하며, 조화로운 관계를 중요하게 여깁니다. 안정과 위로를 주는 콘텐츠에 끌립니다. 감정을 중심으로 세상을 받아들이는 편입니다.",
+      "삼각형 (TRI)": "당신은 목표지향적이고 주도적인 유형입니다. \n명확한 결과와 효율을 중시하며, \n빠른 결정과 실행을 선호합니다. \n도전적이고 생산적인 콘텐츠에 매력을 느낍니다.\n 목적이 분명한 상황에서 힘을 발휘합니다.",
+      "사각형 (SQR)": "당신은 안정과 구조를 중시하는 유형입니다. \n루틴과 계획 속에서 편안함을 느끼며, \n정보 위주의 콘텐츠에 신뢰를 둡니다.\n 명확하고 정돈된 환경을 선호합니다. \n실용적인 사고를 기반으로 합니다.",
+      "선 (LIN)": "당신은 유연하고 감각적인 유형입니다. \n정해진 틀보다는 흐름을 따르는 걸 좋아합니다. \n직관적으로 콘텐츠를 고르고, 분위기에 민감합니다.\n 즉흥적이고 감성적인 몰입을 즐깁니다.\n 다양한 것을 자유롭게 탐색하는 성향입니다."
+    };
+
+    const compatibility = {
+      "원 (CIR)": {
+        good: "잘 어울리는 유형: 선 (LIN)",
+        bad: "안 어울리는 유형: 삼각형 (TRI)"
+      },
+      "삼각형 (TRI)": {
+        good: "잘 어울리는 유형: 사각형 (SQR)",
+        bad: "안 어울리는 유형: 원 (CIR)"
+      },
+      "사각형 (SQR)": {
+        good: "잘 어울리는 유형: 삼각형 (TRI)",
+        bad: "안 어울리는 유형: 선 (LIN)"
+      },
+      "선 (LIN)": {
+        good: "잘 어울리는 유형: 원 (CIR)",
+        bad: "안 어울리는 유형: 사각형 (SQR)"
+      }
+    };
+
+    // const container = document.querySelector('.container');
+    // container.style.backgroundColor = color;
+    document.querySelector('.type-box').style.backgroundColor = color;
+
+    document.getElementById('typeText').innerText = `당신은 '${type}' 유형입니다.`;
+    document.getElementById('typeImage').src = image;
+    document.getElementById('typeImage').alt = `${type} 이미지`;
+    document.getElementById('typeDesc').innerHTML = descriptions[type].replace(/\n/g, '<br>');
+    document.getElementById('typeCompatibility').innerHTML = `
+      <div class="match-section">
+        <div class="match-box match-good">
+          <h4>잘 어울리는 유형</h4>
+          <p>${compatibility[type].good.replace('잘 어울리는 유형: ', '')}</p>
+        </div>
+        <div class="match-box match-bad">
+          <h4>안 어울리는 유형</h4>
+          <p>${compatibility[type].bad.replace('안 어울리는 유형: ', '')}</p>
+        </div>
+      </div>
+    `;
+  </script>
+</body>
+</html>
